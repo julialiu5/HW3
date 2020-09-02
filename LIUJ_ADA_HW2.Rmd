@@ -1,0 +1,656 @@
+---
+title: 'ADA: HW2_LIU'
+author: "Julia Liu"
+date: "8/30/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#Homework 2 for Dr. Kim Johnson and Xiaoyang
+```
+
+```{r}
+#Installing packages to be able to read different files
+install.packages("foreign") 
+install.packages("haven") 
+install.packages("readr") 
+
+#Uploading packages to be able to read the files
+library(foreign) #spss, stata and xpt files
+library(haven) #spss, stata and xpt files
+library(readr) #CSV files
+```
+```{r}
+#Uploading the class1 survey datafile - CSV
+C1survey <- 
+  read_csv(
+    "https://raw.githubusercontent.com/kijohnson/ADA-FAll-2020/master/Class%20One/Class%201%20Survey%20Fall%202020.csv"
+    )
+
+#Output Message: Parsed with column specification:
+#cols(
+#  .default = col_character(),
+#  id = col_double(),
+#  `What is your level of R experience (1=None, 5=Advanced)?` = col_double(),
+#  `How comfortable are you with coding?` = col_double(),
+# `What is your favorite number?` = col_double()
+#)
+#See spec(...) for full column specifications.
+```
+```{r}
+#Number of rows - observations, and columns - variables
+dim(C1survey)
+
+#Output
+#[1] 32 27
+#32 Rows, and 27 Columns
+```
+```{r}
+#getting raw data - column names
+colnames(C1survey)
+
+#Output:
+#[1] "id"
+#[2] "Do you like cats?"
+#[3] "Do you like dogs?"
+#[4] "If you were stranded on a desert island, what is the one item you want to have with you?" 
+#[5] "If you were to create a slogan for your life, what would the slogan be? (Examples: \"Eat, drink, and be merry, for tomorrow, we all die.\" \"Bite off more than you can chew.\" \"There are far better things ahead than any we leave behind.\")"
+#[6] "What is your favorite day of the week?"
+#[7] "Are you a lark, an owl, or a hummingbird?"
+#[8] "What is your favorite food?"
+#[9] "What is your favorite drink?"
+#[10] "What is your favorite season?"
+#[11] "What is your favorite Month?"
+#[12] "What is one hobby that you enjoy?"
+#[13] "What is your degree program?"
+#[14] "What is your primary specialization?"
+#[15] "What is your primary statistical software?"
+#[16] "What is your level of R experience (1=None, 5=Advanced)?"
+#[17] "How comfortable are you with coding?"
+#[18] "How long have you been coding (in years or months)?"
+#[19] "What are three things you hope to learn in this course?"
+#[20] "What is your major public health area of interest (e.g. cancer, heart disease, maternal child health, disparities, etc.)?"
+#[21] "What is your favorite number?"
+#[22] "What is your birth day (e.g. October 28-report 28)?"    
+#[23] "What is your birth month (e.g. October 28-report 10)?"
+#[24] "What is your home country?"
+#[25] "What is your home state?"
+#[26] "What is your home city?"
+#[27] "What is your highest education level?"
+```
+```{r}
+#uploading package tidyverse and dplyr
+library(tidyverse)
+library(dplyr)
+```
+
+```{r}
+#Renaming Columns
+names(C1survey)[names(C1survey) == "id"] <- "ID"
+names(C1survey)[names(C1survey) == "Do you like cats?"] <- "Cats"
+names(C1survey)[names(C1survey) == "Do you like dogs?"] <- "Dogs"
+names(C1survey)[names(C1survey) == "If you were stranded on a desert island, what is the one item you want to have with you?"] <- "Stranded_Item"
+names(C1survey)[names(C1survey) == "If you were to create a slogan for your life, what would the slogan be? (Examples: \"Eat, drink, and be merry, for tomorrow, we all die.\" \"Bite off more than you can chew.\" \"There are far better things ahead than any we leave behind.\")"] <- "Slogan"
+names(C1survey)[names(C1survey) == "What is your favorite day of the week?"] <- "Favorite_Week"
+names(C1survey)[names(C1survey) == "Are you a lark, an owl, or a hummingbird?"] <- "Night/Day_Person"
+names(C1survey)[names(C1survey) == "What is your favorite food?"] <- "Favorite_Food"
+names(C1survey)[names(C1survey) == "What is your favorite drink?"] <- "Favorite_Drink"
+names(C1survey)[names(C1survey) == "What is your favorite season?"] <- "Favorite_Season"
+names(C1survey)[names(C1survey) == "What is your favorite Month?"] <- "Favorite_Month"
+names(C1survey)[names(C1survey) == "What is one hobby that you enjoy?"] <- "Hobby"
+names(C1survey)[names(C1survey) == "What is your degree program?"] <- "Program"
+names(C1survey)[names(C1survey) == "What is your primary specialization?"] <- "Specialization"
+names(C1survey)[names(C1survey) == "What is your primary statistical software?"] <- "Primary_Stats_Software"
+names(C1survey)[names(C1survey) == "What is your level of R experience (1=None, 5=Advanced)?"] <- "R_Experience"
+names(C1survey)[names(C1survey) == "How comfortable are you with coding?"] <- "Comfortability_Coding"
+names(C1survey)[names(C1survey) == "How long have you been coding (in years or months)?"] <- "Length_Coding"
+names(C1survey)[names(C1survey) == "What are three things you hope to learn in this course?"] <- "Hope_Course"
+names(C1survey)[names(C1survey) == "What is your major public health area of interest (e.g. cancer, heart disease, maternal child health, disparities, etc.)?"] <- "PH_Interest"
+names(C1survey)[names(C1survey) == "What is your favorite number?"] <- "Favorite_Number"
+names(C1survey)[names(C1survey) == "What is your birth day (e.g. October 28-report 28)?"] <- "Birth_Day"
+names(C1survey)[names(C1survey) == "What is your birth month (e.g. October 28-report 10)?"] <- "Birth_Month"
+names(C1survey)[names(C1survey) == "What is your home country?"] <- "Home_Country"
+names(C1survey)[names(C1survey) == "What is your home state?"] <- "Home_State"
+names(C1survey)[names(C1survey) == "What is your home city?"] <- "Home_City"
+names(C1survey)[names(C1survey) == "What is your highest education level?"] <- "Highest_Education"
+```
+```{r}
+#Checking if the recode worked 
+colnames(C1survey)
+
+#Output: 
+ #[1] "ID"                       "Cats"                     "Dogs"                     "Stranded_Item"            "Slogan"                  
+ #[6] "Favorite_Week"            "Night/Day_Person"         "Favorite_Food"            "Favorite_Drink"           "Favorite_Season"         
+#[11] "Favorite_Month"           "Hobby"                    "Program"                  "Specialization"           "Primary_Stats_Software"  
+#[16] "R_Experience"             "Comfortability_Coding"    "Length_Coding"            "Hope_Course"              "PH_Interest"             
+#[21] "Favorite_Number"          "Birth_Day"                "Birth_Month"              "Home_Country"             "Home_State"
+#[26] "Home_City"                "Highest_Education" 
+```
+```{r}
+#Checking the class of the variables
+
+#Class of ID
+class(C1survey$ID)
+#Output:
+#[1] Numeric
+
+#Class of Cats
+class(C1survey$Cats)
+#Output:
+#[1] Character
+
+#Class of Dogs
+class(C1survey$Dogs)
+#Output:
+#[1] Character
+
+#Class of Stranded_Item
+class(C1survey$Stranded_Item)
+#Output:
+#[1] Character
+
+#Class of Slogan
+class(C1survey$Slogan)
+#Output:
+#[1] Character
+
+#Class of Favorite Week
+class(C1survey$Favorite_Week)
+#Output:
+#[1] Character
+
+#Class of Night/Day_Person
+class(C1survey$'Night/Day_Person')
+#Output:
+#[1] Character
+
+#Class of Favorite_Food
+class(C1survey$Favorite_Food)
+#Output:
+#[1] Character
+
+#Class of Favorite_Drink
+class(C1survey$Favorite_Drink)
+#Output:
+#[1] Character
+
+#Class of Favorite_Season
+class(C1survey$Favorite_Season)
+#Output:
+#[1] Character
+
+#Class of Favorite_Month
+class(C1survey$Favorite_Month)
+#Output:
+#[1] Character
+
+#Class of Hobby
+class(C1survey$Hobby)
+#Output:
+#[1] Character
+
+#Class of Program
+class(C1survey$Program)
+#Output:
+#[1] Character
+
+#Class of Specialization
+class(C1survey$Specialization)
+#Output:
+#[1] Character
+
+#Class of Primary_Stats_Software
+class(C1survey$Primary_Stats_Software)
+#Output:
+#[1] Character
+
+#Class of R_Experience
+class(C1survey$R_Experience)
+#Output:
+#[1] Numeric
+
+#Class of Length_Coding
+class(C1survey$Length_Coding)
+#Output:
+#[1] Character
+
+#Class of Hope_Course
+class(C1survey$Hope_Course)
+#Output:
+#[1] Character
+
+#Class of PH_Interest
+class(C1survey$PH_Interest)
+#Output:
+#[1] Character
+
+#Class of Favorite_Number
+class(C1survey$Favorite_Number)
+#Output:
+#[1] Character
+
+#Class of Birth_Day
+class(C1survey$Birth_Day)
+#Output:
+#[1] Character
+
+#Class of Birth_Month
+class(C1survey$Birth_Month)
+#Output:
+#[1] Character
+
+#Class of Home_Country
+class(C1survey$Home_Country)
+#Output:
+#[1] Character
+
+#Class of Home_State
+class(C1survey$Home_State)
+#Output:
+#[1] Character
+
+#Class of Home_City
+class(C1survey$Home_City)
+#Output:
+#[1] Character
+
+#Class of Highest_Education
+class(C1survey$Highest_Education)
+#Output:
+#[1] Character
+```
+```{r}
+#Easier than above, displays it all
+lapply(C1survey, class)
+```
+```{r}
+#Getting the values of Birth Day
+C1survey$Birth_Day
+
+#Output:
+#[1] "28"     "4"      "25"     "8"      "23"     "4"      "17"     "4"      "10"     "8"      "26"     "23"     "31"     "25"     "27"     "7"      "17"    
+#[18] "11"     "13"     "25"     "12"     "29"     "20"     "9"      "26"     "10"     "19"     "20"     "4"      "11"     "26-Mar" "22" 
+
+#Need to change 26-Mar
+
+```
+```{r}
+#Recoding 26-Mar in Birth Day Column
+C1survey$Birth_Day <- recode(C1survey$Birth_Day,
+                             '26-Mar' = "26")
+
+```
+```{r}
+#Checking to see if the recode worked for 26-Mar in Birth Day Column
+C1survey$Birth_Day
+
+#Worked!
+#Output:  [1] "28" "4"  "25" "8"  "23" "4"  "17" "4"  "10" "8"  "26" "23" "31" "25" "27" "7"  "17" "11" "13" "25" "12" "29" "20" "9"  "26" "10" "19" "20" "4"  "11" "26"
+
+```
+```{r}
+#Getting the values of Birth month
+C1survey$Birth_Month
+
+#Output:
+#[1] "10"       "9"        "6"        "9"        "11"       "10"       "10"       "december" "12"       "7"        "9"        "7"        "5"        "11"      
+#[15] "9"        "12"       "August"   "3"        "4"        "5"        "6"        "12"       "1"        "3"        "August"   "8"        "12"       "5"       
+#[29] "10"       "8"        "March"    "6" 
+
+#Need to change december, August, and March
+```
+```{r}
+#Recoding Birth months in Birth Month Column
+C1survey$Birth_Month <- recode(C1survey$Birth_Month,
+                             'december' = "12",
+                             'August' = "8",
+                             'March' = "3")
+```
+```{r}
+#Checking to see if the recode worked for Birth Month
+C1survey$Birth_Month
+
+#worked!
+#Output:
+#[1] "10" "9"  "6"  "9"  "11" "10" "10" "12" "12" "7"  "9"  "7"  "5"  "11" "9"  "12" "8"  "3"  "4"  "5"  "6"  "12" "1"  "3"  "8"  "8"  "12" "5"  "10" "8"  "3" 
+```
+```{r}
+#Getting values for Stranded Item
+C1survey$Stranded_Item
+```
+```{r}
+#Recode Stranded Items - Grouping together 
+
+C1survey$Stranded_Item <- recode(C1survey$Stranded_Item,
+                                 'water' = "Water",
+                                 'a bottle of water' = "Water",
+                                 'Phone with network' = "Phone",
+                                 'A Satellite Phone' = "Phone",
+                                 'Lighter' = "Fire starter",
+                                 'A water filter' = "Water Filter",
+                                 'ZeroWater Filter' = "Water Filter",
+                                 "A book, but I'd die of old age before being able to decide on just one" = "Reading Material",
+                                 'A Kindle' = "Reading Material",
+                                 'a kindle with lots of e-books' = "Reading Material",
+                                 'phone' = "Phone",
+                                 'Cheese' = "Food",
+                                 'Water, Food, Husband' = "Multiple",
+                                 'A swiss army knife' = "Tool",
+                                 'flare gun' = "Tool",
+                                 "Can't decide between water and a satellite phone" = "Multiple",
+                                 'a glass cup with cap' = "Tool",
+                                 'A rainmaking machine' = "Tool",
+                                 'a LifeStraw' = "Water Filter",
+                                 'A friend' = "Companion",
+                                 'Dog' = "Companion",
+                                 'computer' = "Tool",
+                                 'A hammock' = "Portable Sleeping Tool",
+                                 'Sleeping bag' = "Portable Sleeping Tool"
+                                 )
+```
+```{r}
+#Checking to see if recode worked
+C1survey$Stranded_Item
+
+table(C1survey$Stranded_Item)
+```
+```{r}
+#Checking variables for Favorite week to see if recode needs to be done
+C1survey$Favorite_Week
+
+#No need
+```
+```{r}
+#Checking variables for NightDay Person if recode is needed
+C1survey$`Night/Day_Person`
+
+#Yes, make it more simple 
+```
+```{r}
+#Recode variables for NightDay Person to make it easier
+
+C1survey$`Night/Day_Person` <- recode(C1survey$`Night/Day_Person`,
+                                      'Hummingbird (I am neither a lark nor an owl)' = "Neither",
+                                      'Owl (I am a night person)' = "Night",
+                                      'Lark ( I am a morning person)' = "Morning")
+```
+
+```{r}
+#Checking to see if recode worked for Nightday Person
+C1survey$`Night/Day_Person`
+
+#worked!
+```
+```{r}
+#Checking variables for Favorite food
+C1survey$Favorite_Food
+
+#Yes, recode to ethnic/groupings
+```
+```{r}
+#Recoding Favorite foods 
+
+C1survey$Favorite_Food <- recode(C1survey$Favorite_Food,
+                                 'Shrimp' = "Seafood",
+                                 'Cake' = "Dessert",
+                                 'Spicy wings' = "Spicy Chicken Wings",
+                                 'Too hard to choose the favorite...Tofu?' = "Tofu",
+                                 'Apples' = "Fruit",
+                                 'Watermelon' = "Fruit",
+                                 'Crispy shrimp and salad' = "Seafood",
+                                 'Lasagne' = "Pasta",
+                                 'tacos' = "Tacos",
+                                 'Any food my mom makes' = "Mom Food",
+                                 'anything pasta' = "Pasta",
+                                 'Anything that smells good' = "Multiple",
+                                 'It depends' = "Multiple",
+                                 'All food. Maybe pad thai.' = "Multiple",
+                                 'steak' = "Steak",
+                                 'Sushi' = "Japanese",
+                                 'tonkatsu' = "Japanese",
+                                 'Chicken manchrian' = "Indo-Chinese",
+                                 'Indian cuisine' = "Indian",
+                                 'Paella' = "Spanish"
+                                 )
+```
+```{r}
+#Checking if recode worked
+table(C1survey$Favorite_Food)
+
+#worked!
+```
+```{r}
+#Checking variables for favorite drink
+C1survey$Favorite_Drink
+
+#Yes, need to recode
+```
+```{r}
+#Recode Favorite Drinks
+
+C1survey$Favorite_Drink <- recode(C1survey$Favorite_Drink,
+                                  "soda but i'm trying to change that to water" = "Soda",
+                                  'Mango Dragonfruit Drink - Starbucks' = "Lemonade",
+                                  'orange juice' = "Juice",
+                                  'Orange juice' = "Juice",
+                                  'Orange Juice' = "Juice",
+                                  'Strawberry Kiwi Propel' = "Sports Drink",
+                                  'bubble milk tea' = "Milk Tea",
+                                  'Cherry Coke' = "Soda",
+                                  'Pale Ale' = "Alcoholic Beverage",
+                                  'It depends' = "Multiple",
+                                  'Agua Frescas' = "Juice",
+                                  'Mango smoothie' = "Smoothie",
+                                  'Mojito' = "Alcoholic Beverage",
+                                  'Alcohol causes liver CA, hence it is best to be avoided.' = "Alcoholic Beveage",
+                                  'bubble tea' = "Milk Tea",
+                                  'coffee' = "Coffee",
+                                  'Tea!' = "Tea",
+                                  'Bubble tea' = "Milk Tea",
+                                  'Pure water' = "Water",
+                                  'Gin & Tonic' = "Alcoholic Beverage"
+                                  )
+```
+```{r}
+#checking if recode worked
+C1survey$Favorite_Drink
+
+table(C1survey$Favorite_Drink)
+#worked!
+```
+```{r}
+#Checking variables for Favorite Season
+C1survey$Favorite_Season
+
+#No need
+```
+```{r}
+#Checking variables for Favorite month
+C1survey$Favorite_Month
+
+#No need
+```
+```{r}
+#Checking variables for 
+C1survey$Hobby
+
+#Yes, need to recode
+```
+```{r}
+#Recode for hobby
+
+C1survey$Hobby <- recode(C1survey$Hobby,
+                         'reading novel' = "Reading",
+                         'watch motives' = "Movies",
+                         'Reading a book that makes me forget reality' = "Reading",
+                         'PC games' = "Gaming",
+                         'riding my bicycle' = "Cycling",
+                         'Reading while drinking wine' = "Multiple",
+                         'watching old movies , playing with animals' = "Multiple",
+                         'play tennis' = "Tennis",
+                         'Playing with cats' = "Playing with animals",
+                         'Playing piano' = "Playing an Instrument",
+                         'Jogging' = "Running",
+                         'hiking' = "Outdoor recreation",
+                         'computer game' = "Gaming",
+                         'Reading. (Does sleeping count?)' = "Reading"
+                         
+)
+```
+```{r}
+#Checking to see if recode worked
+
+C1survey$Hobby
+
+#worked!
+```
+```{r}
+#Checking variables for Primary Stats Software
+C1survey$Primary_Stats_Software
+```
+```{r}
+#recode for Primary Stats Software
+C1survey$Primary_Stats_Software <- recode(C1survey$Primary_Stats_Software,
+                                          "It used to be R, but I've lapsed :(" = "R"
+                                          )
+
+#Error code for some reason: Error in UseMethod("recode") : 
+  #no applicable method for 'recode' applied to an object of class "logical"
+
+```
+```{r}
+#checking variables for Home Country
+C1survey$Home_Country
+```
+```{r}
+#recoding for Home country
+C1survey$Home_Country <- recode(C1survey$Home_Country,
+                                'United States' = "USA",
+                                'india' = "India",
+                                'US' = "USA",
+                                'United States of America' = "USA")
+```
+```{r}
+#checking if recode worked
+table(C1survey$Home_Country)
+```
+```{r}
+#checking variables for Home City
+table(C1survey$Home_City)
+```
+```{r}
+#Recode for St. Louis
+C1survey$Home_City <- recode(C1survey$Home_City,
+                             'Saint Louis' = "St. Louis")
+
+#checking recode
+table(C1survey$Home_City)
+```
+```{r}
+#Checking variables for Home State
+table(C1survey$Home_State)
+```
+```{r}
+#Recoding variables for Home stat
+
+C1survey$Home_State <- recode(C1survey$Home_State,
+                              'MO' = "Missouri",
+                              'Shandong province' = "Shandong",
+                              'Jiangsu Province' = "Jiangsu",
+                              'n/a' = NA_character_,
+                              'N/A' = NA_character_)
+```
+```{r}
+#Checking if recode worked
+table(C1survey$Home_State)
+
+#worked!
+```
+```{r}
+#created new column
+C1survey$bseason <- NA
+```
+```{r}
+#Creating new column to determine birthday season
+C1survey$bseason[(C1survey$Birth_Day<30)&(C1survey$Birth_Month==12)] <- 'Winter'
+C1survey$bseason[(C1survey$Birth_Day<30)&(C1survey$Birth_Month==1)] <- 'Winter'
+C1survey$bseason[(C1survey$Birth_Day<30)&(C1survey$Birth_Month==2)] <- 'Winter'
+C1survey$bseason[(C1survey$Birth_Day<32)&(C1survey$Birth_Month==3)] <- 'Spring'
+C1survey$bseason[(C1survey$Birth_Day<32)&(C1survey$Birth_Month==4)] <- 'Spring'
+C1survey$bseason[(C1survey$Birth_Day<32)&(C1survey$Birth_Month==5)] <- 'Spring'
+C1survey$bseason[(C1survey$Birth_Day<32)&(C1survey$Birth_Month==6)] <- 'Summer'
+C1survey$bseason[(C1survey$Birth_Day<32)&(C1survey$Birth_Month==7)] <- 'Summer'
+C1survey$bseason[(C1survey$Birth_Day<32)&(C1survey$Birth_Month==8)] <- 'Summer'
+C1survey$bseason[(C1survey$Birth_Day<32)&(C1survey$Birth_Month==9)] <- 'Fall'
+C1survey$bseason[(C1survey$Birth_Day<32)&(C1survey$Birth_Month==10)] <- 'Fall'
+C1survey$bseason[(C1survey$Birth_Day<32)&(C1survey$Birth_Month==11)] <- 'Fall'
+
+
+```
+```{r}
+#Checking if the new column creation worked
+table(C1survey$bseason)
+```
+```{r}
+#Still missing some values in bseason
+
+C1survey$bseason[(C1survey$Birth_Day==4)&(C1survey$Birth_Month==9)] <- 'Fall'
+C1survey$bseason[(C1survey$Birth_Day==8)&(C1survey$Birth_Month==9)] <- 'Fall'
+C1survey$bseason[(C1survey$Birth_Day==4)&(C1survey$Birth_Month==10)] <- 'Fall'
+C1survey$bseason[(C1survey$Birth_Day==26)&(C1survey$Birth_Month==9)] <- 'Fall'
+C1survey$bseason[(C1survey$Birth_Day==9)&(C1survey$Birth_Month==3)] <- 'Spring'
+C1survey$bseason[(C1survey$Birth_Day==10)&(C1survey$Birth_Month==12)] <- 'Winter'
+C1survey$bseason[(C1survey$Birth_Day==7)&(C1survey$Birth_Month==12)] <- 'Winter'
+C1survey$bseason[(C1survey$Birth_Day==4)&(C1survey$Birth_Month==12)] <- 'Winter'
+C1survey$bseason[(C1survey$Birth_Day==8)&(C1survey$Birth_Month==7)] <- 'Summer'
+
+```
+```{r}
+#Doing a crosstable with birth month and season
+birthday.table <- table(C1survey$Birth_Month, C1survey$bseason)
+#addmargins - Sum 
+addmargins(birthday.table)
+
+#Output: 
+
+#     Fall Spring Summer Winter Sum
+#  1      0      0      0      1   1
+#  10     4      0      0      0   4
+#  11     2      0      0      0   2
+#  12     0      0      0      5   5
+#  3      0      3      0      0   3
+#  4      0      1      0      0   1
+#  5      0      3      0      0   3
+#  6      0      0      3      0   3
+#  7      0      0      2      0   2
+#  8      0      0      4      0   4
+#  9      4      0      0      0   4
+#  Sum   10      7      9      6  32
+```
+```{r}
+#7 - Picking favorite variable to analyze, and question
+
+#Question: Does birth season affect type of favorite drink?
+
+#Creating crosstable of season, and favorite drink
+DrinksandSeason <- table(C1survey$bseason, C1survey$Favorite_Drink)
+```
+```{r}
+#Chisquare
+chisq.test(DrinksandSeason)
+
+#Output: 
+#Chi-squared approximation may be incorrect
+#	Pearson's Chi-squared test
+
+#data:  DrinksandSeason
+#X-squared = 29.089, df = 39, p-value = 0.8764
+
+
+#The p-value is greater than 0.05 - we cannot reject the hypothesis, there is no relationship between birth season and favorite type of drink
+```
+
